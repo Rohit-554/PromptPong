@@ -1,24 +1,60 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# PromptPong
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+A party game for Android and iOS. The audience shouts a word, "KMP", "college",
+"startup", "bug", the host types it in, and the app writes a funny mini-challenge
+about it.
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Challenges are generated **on the device**. Nothing is sent anywhere.
 
-### Running the apps
+## How generation works
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+Two generators, layered:
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+1. **Templates** answer instantly by crossing a pool of challenge frames with the
+   shouted word.
+2. **An on-device model** writes a sharper challenge and replaces the template in
+   place when it is ready.
 
----
+The model takes a few seconds, so it is never in the critical path. The player
+always has a challenge immediately, and a slow, failed or nonsensical model
+response simply leaves the template on screen. The game is fully playable with no
+model at all.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## The AI backends
+
+Each platform uses what it is actually good at:
+
+| Platform | Engine | Model | Setup |
+|---|---|---|---|
+| Android | ONNX Runtime GenAI | Gemma 3 270M | one-time ~300 MB download |
+| iOS | Apple Foundation Models | Apple's system model | none, part of iOS |
+
+On Android the model downloads once as a zip bundle, unpacks into app-private
+storage, and everything after that is offline. ONNX Runtime allocates natively,
+so model size is bounded by device RAM rather than by the Java heap cap.
+
+On iOS there is nothing to download, because Apple Intelligence is part of the
+system. It needs iOS 26 or later, a device that supports Apple Intelligence, the
+feature switched on in Settings, and a real device rather than the Simulator. If
+any of those is missing the app says which one and plays on templates.
+
+## Running it
+
+```shell
+./gradlew :androidApp:installDebug   # Android
+./gradlew :shared:testAndroidHostTest  # unit tests
+```
+
+For iOS, open [`iosApp`](./iosApp) in Xcode and run. Set `TEAM_ID` in
+`iosApp/Configuration/Config.xcconfig` for device builds.
+
+## Structure
+
+- [`/shared`](./shared/src) — domain, generators, both AI engines, UI.
+- [`/androidApp`](./androidApp) — thin Android host.
+- [`/iosApp`](./iosApp) — thin SwiftUI host, plus the Swift side of the Apple
+  Intelligence bridge.
+
+`CLAUDE.md` documents the integration details that are easy to get wrong, notably
+the custom Ivy repository the ONNX GenAI AAR comes from and the Kotlin-to-Swift
+bridge that reaches Apple Intelligence.

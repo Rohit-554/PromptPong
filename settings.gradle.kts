@@ -24,6 +24,16 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+
+        ivy {
+            name = "OnnxRuntimeGenAiReleases"
+            url = uri("https://github.com/microsoft/onnxruntime-genai/releases/download")
+            patternLayout {
+                artifact("v[revision]/[artifact]-[revision].[ext]")
+            }
+            metadataSources { artifact() }
+            content { includeModule("ai.onnxruntime.genai", "onnxruntime-genai-android") }
+        }
     }
 }
 
