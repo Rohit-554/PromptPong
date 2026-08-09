@@ -72,6 +72,18 @@ class ChallengeViewModel(
         }
     }
 
+    fun onDeleteChallenge(id: Long) {
+        val current = _state.value
+        _state.value = current.copy(
+            history = current.history.filterNot { it.id == id },
+            current = current.current?.takeIf { it.id != id },
+        )
+    }
+
+    fun onClearHistory() {
+        _state.value = _state.value.copy(history = emptyList())
+    }
+
     fun onSetUpModel() {
         viewModelScope.launch {
             delivery.setUp().collect { progress ->

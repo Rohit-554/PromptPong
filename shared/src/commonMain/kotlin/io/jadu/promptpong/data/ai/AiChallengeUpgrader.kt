@@ -9,12 +9,20 @@ import kotlinx.coroutines.flow.fold
 /** Turns a shouted word into a dare using the platform's local AI engine. */
 class AiChallengeUpgrader(private val engine: LocalAiEngine) : ChallengeUpgrader {
 
+    private val unusedOpeners = ArrayDeque<String>()
+
+    /** Cycles through every opener before repeating any, so a run of rounds stays varied. */
+    private fun nextOpener(): String {
+        if (unusedOpeners.isEmpty()) unusedOpeners.addAll(OPENERS.shuffled())
+        return unusedOpeners.removeFirst()
+    }
+
     /** Accepts whatever the model writes, so the fallback is only used when it writes nothing. */
     override suspend fun upgrade(word: String): String? =
         clean(generateOnce(word)).takeIf { it.isNotBlank() }
 
     private suspend fun generateOnce(word: String): String =
-        engine.generate(buildPrompt(word), CONFIG.copy(assistantPrefill = OPENERS.random()))
+        engine.generate(buildPrompt(word), CONFIG.copy(assistantPrefill = nextOpener()))
             .fold(StringBuilder()) { text, token ->
                 when (token) {
                     is AiToken.Text -> text.append(token.text)
@@ -54,11 +62,47 @@ class AiChallengeUpgrader(private val engine: LocalAiEngine) : ChallengeUpgrader
          * The answer is forced to start with one of these, so the model can only
          * continue an instruction that is already underway. A 270M model cannot be
          * talked out of "Here's a party game idea:", but it can be started past it.
+         *
+         * Each one has to read naturally with the shouted word straight after it,
+         * and the mix of shapes is deliberate: a room notices repeated sentence
+         * structure long before it notices a repeated verb.
          */
         private val OPENERS = listOf(
-            "Act out ", "Mime ", "Sing about ", "Explain ", "Sell ",
-            "Perform ", "Describe ", "Pretend ", "Convince the room that ",
+            "Act out ",
+            "Mime ",
+            "Sing about ",
+            "Rap about ",
+            "Explain ",
+            "Sell ",
+            "Perform ",
+            "Describe ",
+            "Pretend ",
+            "Draw ",
+            "Dance like ",
+            "Argue that ",
+            "Convince the room that ",
+            "Confess that ",
+            "Brag about ",
+            "Complain about ",
+            "Apologise for ",
+            "Give a speech about ",
+            "Do an impression of ",
+            "Tell a bedtime story about ",
+            "Invent a new word for ",
+            "Teach the room about ",
+            "Review ",
+            "Rank ",
+            "Advertise ",
+            "Warn everyone about ",
+            "Celebrate ",
+            "Mourn ",
+            "Whisper a secret about ",
+            "Shout a slogan about ",
+            "Act like you have never seen ",
+            "Explain to a toddler what ",
         )
+
+        internal val openers: List<String> get() = OPENERS
 
         /** Formatting only: strips turn markers, labels, bullets and quotes. */
         fun clean(raw: String): String {
