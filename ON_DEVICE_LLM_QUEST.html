@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PromptPong: Local AI Quest</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f7f5ff;
+      --muted: #a6a0bf;
+      --space: #100d22;
+      --panel: #1c1736;
+      --line: #3c3462;
+      --pink: #ff5ba7;
+      --cyan: #5fe8ff;
+      --lime: #b4f75e;
+      --gold: #ffd369;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 0%, #432270 0, transparent 28rem),
+        radial-gradient(circle at 90% 18%, #123d58 0, transparent 31rem),
+        var(--space);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main { width: min(1080px, calc(100% - 32px)); margin: 0 auto; padding: 48px 0 80px; }
+
+    .hero {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: clamp(28px, 6vw, 64px);
+      background: linear-gradient(135deg, #261a4cdd, #17132ddd);
+      box-shadow: 0 24px 80px #0008;
+    }
+
+    .eyebrow, .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: .73rem;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow { color: var(--cyan); background: #123b4d; }
+    .tag { color: var(--lime); background: #294319; }
+    .ios { color: var(--gold); background: #4c3b18; }
+    .shared { color: var(--pink); background: #4a1c3a; }
+
+    h1 { margin: 18px 0 12px; font-size: clamp(2.5rem, 8vw, 5.8rem); line-height: .92; letter-spacing: -.075em; }
+    h2 { margin: 48px 0 16px; font-size: 1.65rem; }
+    p { color: var(--muted); line-height: 1.65; }
+    .lead { max-width: 650px; font-size: 1.1rem; }
+
+    .rules {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 30px;
+    }
+    .rule { padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: #0e0b1ccc; }
+    .rule strong { display: block; margin-bottom: 4px; color: var(--ink); }
+    .rule span { color: var(--muted); font-size: .9rem; }
+
+    .path { display: grid; gap: 14px; }
+    .level {
+      display: grid;
+      grid-template-columns: 58px 1fr;
+      gap: 17px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(120deg, #211b3ddd, #17132bbb);
+    }
+    .level:hover { border-color: var(--cyan); transform: translateY(-2px); transition: .18s ease; }
+    .number { display: grid; place-items: center; align-self: start; width: 48px; height: 48px; border-radius: 14px; color: #130b23; background: var(--cyan); font-weight: 900; font-size: 1.2rem; }
+    .level h3 { margin: 10px 0 8px; font-size: 1.15rem; }
+    code { color: var(--lime); font-family: "SFMono-Regular", Consolas, monospace; font-size: .95em; }
+    .hint { margin: 12px 0 0; color: #d2cdea; font-size: .92rem; }
+    .hint b { color: var(--gold); }
+    .branch { margin-top: 48px; padding: 25px; border: 1px dashed #6d628e; border-radius: 22px; background: #151127a8; }
+    .branch h2 { margin-top: 0; }
+    footer { margin-top: 45px; text-align: center; color: var(--muted); }
+
+    @media (max-width: 650px) {
+      main { width: min(100% - 22px, 1080px); padding-top: 18px; }
+      .rules { grid-template-columns: 1fr; }
+      .level { grid-template-columns: 44px 1fr; padding: 17px; }
+      .number { width: 38px; height: 38px; border-radius: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="eyebrow">PromptPong classroom quest</span>
+      <h1>Wake up<br>the local AI.</h1>
+      <p class="lead">This game can make silly dares with an AI model running on the device. Your job is to restore the hidden functions, one checkpoint at a time, and follow the path from button tap to generated answer.</p>
+      <div class="rules">
+        <div class="rule"><strong>Follow the numbers</strong><span>Restore one function before moving to the next.</span></div>
+        <div class="rule"><strong>Read first</strong><span>Every hidden block already contains the answer.</span></div>
+        <div class="rule"><strong>Pick your device</strong><span>Follow Android 1 to 25, or iOS 14, 15, 5 to 13, then 16 to 22.</span></div>
+      </div>
+    </section>
+
+    <h2>App entry and shared game path</h2>
+    <p>Android students begin at Level 1. iOS students begin at Levels 14 and 15 below, then return here at Level 5. These functions explain the game, its fallback answer, and the prompt sent to local AI.</p>
+    <section class="path">
+      <article class="level"><div class="number">1</div><div><span class="tag shared">Android</span><h3><code>MainActivity.onCreate</code></h3><p>Starts the Android app and puts the game on screen.</p><p class="hint"><b>Hint:</b> This is the front door of the Android version.</p></div></article>
+      <article class="level"><div class="number">2</div><div><span class="tag">Android</span><h3><code>Platform.android.kt: initPromptPong</code></h3><p>Top-level function. Gives Android access to app storage before model files are used.</p><p class="hint"><b>Hint:</b> A downloaded model needs a home.</p></div></article>
+      <article class="level"><div class="number">3</div><div><span class="tag">Android</span><h3><code>Platform.android.kt: createLocalAiEngine</code></h3><p>Top-level function. Chooses Android's local AI engine.</p><p class="hint"><b>Hint:</b> This is the part that makes answers.</p></div></article>
+      <article class="level"><div class="number">4</div><div><span class="tag">Android</span><h3><code>Platform.android.kt: createModelDelivery</code></h3><p>Top-level function. Chooses the helper that fetches Android's model.</p><p class="hint"><b>Hint:</b> This is the part that brings the model.</p></div></article>
+      <article class="level"><div class="number">5</div><div><span class="tag shared">Shared</span><h3><code>ChallengeViewModel.init</code></h3><p>Checks whether local AI is ready when the game begins.</p><p class="hint"><b>Hint:</b> Look for the small block that checks <code>delivery.isReady()</code>.</p></div></article>
+      <article class="level"><div class="number">6</div><div><span class="tag shared">Shared</span><h3><code>ChallengeViewModel.onPlay</code></h3><p>Handles the Play button, remembers the shouted word, and asks for a challenge.</p><p class="hint"><b>Hint:</b> This starts one round of PromptPong.</p></div></article>
+      <article class="level"><div class="number">7</div><div><span class="tag shared">Shared</span><h3><code>HybridChallengeGenerator.generate</code></h3><p>Combines the local AI path with the built-in dare fallback.</p><p class="hint"><b>Hint:</b> The game should still have something fun to show if AI is unavailable.</p></div></article>
+      <article class="level"><div class="number">8</div><div><span class="tag shared">Shared</span><h3><code>HybridChallengeGenerator.generateWithModel</code></h3><p>Lets one request use the model at a time and gives up safely if it takes too long.</p><p class="hint"><b>Hint:</b> This protects the phone from two rounds talking over each other.</p></div></article>
+      <article class="level"><div class="number">9</div><div><span class="tag shared">Shared</span><h3><code>AiChallengeUpgrader.upgrade</code></h3><p>Asks for an upgraded dare and keeps only a useful answer.</p><p class="hint"><b>Hint:</b> This is where model text gets cleaned up.</p></div></article>
+      <article class="level"><div class="number">10</div><div><span class="tag shared">Shared</span><h3><code>AiChallengeUpgrader.generateOnce</code></h3><p>Collects the small pieces of text coming from the local model.</p><p class="hint"><b>Hint:</b> The model speaks a little at a time.</p></div></article>
+      <article class="level"><div class="number">11</div><div><span class="tag shared">Shared</span><h3><code>AiChallengeUpgrader.buildPrompt</code></h3><p>Creates a clear instruction for the local model.</p><p class="hint"><b>Hint:</b> Read it aloud. Would an AI know exactly what you want?</p></div></article>
+      <article class="level"><div class="number">12</div><div><span class="tag shared">Shared</span><h3><code>ChallengeViewModel.onSetUpModel</code></h3><p>Shows download progress while the model is prepared.</p><p class="hint"><b>Hint:</b> This turns delivery events into screen updates.</p></div></article>
+      <article class="level"><div class="number">13</div><div><span class="tag shared">Shared</span><h3><code>ChallengeViewModel.prepareEngine</code></h3><p>Checks availability, loads the model, and enables AI play.</p><p class="hint"><b>Hint:</b> This connects the game screen to the platform engine.</p></div></article>
+    </section>
+
+    <section class="branch">
+      <h2>Choose your platform path</h2>
+      <p>Android uses a downloadable ONNX model. iOS uses Apple's built-in local model. After the shared game levels, continue with the platform you are using.</p>
+    </section>
+
+    <h2>Android path: ONNX Runtime</h2>
+    <section class="path">
+      <article class="level"><div class="number">14</div><div><span class="tag">Android</span><h3><code>AndroidModelStorage.isModelReady</code></h3><p>Checks whether every required model file is already on the phone.</p><p class="hint"><b>Hint:</b> A model is a folder full of files, not just one file.</p></div></article>
+      <article class="level"><div class="number">15</div><div><span class="tag">Android</span><h3><code>AndroidModelDelivery.isReady</code></h3><p>Lets the delivery layer ask storage whether the model is ready.</p><p class="hint"><b>Hint:</b> Small functions can still keep layers nicely separated.</p></div></article>
+      <article class="level"><div class="number">16</div><div><span class="tag">Android</span><h3><code>AndroidModelDelivery.setUp</code></h3><p>Runs the complete Android model delivery journey.</p><p class="hint"><b>Hint:</b> It calls the next three functions in order.</p></div></article>
+      <article class="level"><div class="number">17</div><div><span class="tag">Android</span><h3><code>AndroidModelDelivery.download</code></h3><p>Downloads the zipped ONNX model and reports progress to the game.</p><p class="hint"><b>Hint:</b> The app downloads once, then keeps the model locally.</p></div></article>
+      <article class="level"><div class="number">18</div><div><span class="tag">Android</span><h3><code>AndroidModelDelivery.extract</code></h3><p>Unpacks the model safely.</p><p class="hint"><b>Hint:</b> Notice the safety check that stops unsafe zip paths.</p></div></article>
+      <article class="level"><div class="number">19</div><div><span class="tag">Android</span><h3><code>AndroidModelDelivery.verifyExtractedBundle</code></h3><p>Checks that the important model files exist.</p><p class="hint"><b>Hint:</b> Do this before treating a download as usable.</p></div></article>
+      <article class="level"><div class="number">20</div><div><span class="tag">Android</span><h3><code>AndroidModelStorage.promoteExtractedModel</code></h3><p>Moves the checked model from temporary storage to its final location.</p><p class="hint"><b>Hint:</b> Temporary files are useful until you know the download is good.</p></div></article>
+      <article class="level"><div class="number">21</div><div><span class="tag">Android</span><h3><code>AndroidOnnxEngine.availability</code></h3><p>Checks the engine status before loading.</p><p class="hint"><b>Hint:</b> The UI needs a human-friendly status message.</p></div></article>
+      <article class="level"><div class="number">22</div><div><span class="tag">Android</span><h3><code>AndroidOnnxEngine.load</code></h3><p>Loads the ONNX model and tokenizer.</p><p class="hint"><b>Hint:</b> A tokenizer turns words into numbers the model understands.</p></div></article>
+      <article class="level"><div class="number">23</div><div><span class="tag">Android</span><h3><code>AndroidOnnxEngine.generate</code></h3><p>Asks ONNX Runtime to generate new tokens.</p><p class="hint"><b>Hint:</b> This is the real on-device inference call.</p></div></article>
+      <article class="level"><div class="number">24</div><div><span class="tag">Android</span><h3><code>AndroidOnnxEngine.applyChatTemplate</code></h3><p>Formats the instruction for Gemma's conversation format.</p><p class="hint"><b>Hint:</b> Chat models expect more than plain text.</p></div></article>
+      <article class="level"><div class="number">25</div><div><span class="tag">Android</span><h3><code>AndroidOnnxEngine.streamTokens</code></h3><p>Sends each fresh piece of the answer back to the game as it appears.</p><p class="hint"><b>Hint:</b> Watch how stop sequences keep the answer tidy.</p></div></article>
+    </section>
+
+    <h2>iOS path: Apple Intelligence</h2>
+    <section class="path">
+      <article class="level"><div class="number">14</div><div><span class="tag ios">iOS</span><h3><code>iOSApp.init</code></h3><p>Starts the Swift to Kotlin handshake at launch.</p><p class="hint"><b>Hint:</b> Kotlin cannot call Apple's Swift-only model framework directly.</p></div></article>
+      <article class="level"><div class="number">15</div><div><span class="tag ios">iOS</span><h3><code>AppleIntelligenceBridge.kt: registerAppleIntelligenceBridge</code></h3><p>Top-level function. Stores Swift's AI service where Kotlin can reach it.</p><p class="hint"><b>Hint:</b> This is the bridge between the two languages.</p></div></article>
+      <article class="level"><div class="number">16</div><div><span class="tag ios">iOS</span><h3><code>AppleIntelligenceEngine.refresh</code></h3><p>Asks Swift for the latest Apple Intelligence status.</p><p class="hint"><b>Hint:</b> The app uses this status to explain what the phone supports.</p></div></article>
+      <article class="level"><div class="number">17</div><div><span class="tag ios">iOS</span><h3><code>AppleIntelligenceEngine.availability</code></h3><p>Turns that status into information the shared game can use.</p><p class="hint"><b>Hint:</b> This is Kotlin's view of the iPhone's model.</p></div></article>
+      <article class="level"><div class="number">18</div><div><span class="tag ios">iOS</span><h3><code>AppleIntelligenceEngine.load</code></h3><p>Makes sure Apple Intelligence is awake before asking it anything.</p><p class="hint"><b>Hint:</b> iOS needs no model download stage.</p></div></article>
+      <article class="level"><div class="number">19</div><div><span class="tag ios">iOS</span><h3><code>AppleIntelligenceService.checkAvailability</code></h3><p>Swift checks the operating system, device, and Apple Intelligence status.</p><p class="hint"><b>Hint:</b> Read each message for an old iOS version, Simulator, and unsupported device.</p></div></article>
+      <article class="level"><div class="number">20</div><div><span class="tag ios">iOS</span><h3><code>AppleIntelligenceEngine.generate</code></h3><p>Kotlin passes the prompt to Swift and listens for response chunks.</p><p class="hint"><b>Hint:</b> This uses callbacks because it crosses a language boundary.</p></div></article>
+      <article class="level"><div class="number">21</div><div><span class="tag ios">iOS</span><h3><code>AppleIntelligenceService.generate</code></h3><p>Apple's model creates a response locally and sends only newly added text.</p><p class="hint"><b>Hint:</b> The Swift stream gives the whole answer so far. Find the code that calculates only the new part.</p></div></article>
+      <article class="level"><div class="number">22</div><div><span class="tag ios">iOS</span><h3><code>AppleIntelligenceService.cancel</code></h3><p>Stops the current AI response when a round is cancelled.</p><p class="hint"><b>Hint:</b> Every good game needs a stop button.</p></div></article>
+    </section>
+
+    <footer>You did it. You have followed a local AI request from a game button to a model running on the device.</footer>
+  </main>
+</body>
+</html>
