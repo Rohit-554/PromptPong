@@ -26,9 +26,11 @@ class AndroidModelDelivery(
 
     override val requiresDownload: Boolean = true
 
-    override suspend fun isReady(): Boolean = storage.isModelReady()
+    // First ask the storage keeper whether the Android model is already here.
+    /* override suspend fun isReady(): Boolean = storage.isModelReady() */
 
-    override fun setUp(): Flow<ModelSetupProgress> = flow {
+    // This is the delivery quest. Download, unpack, check, then save the model.
+    /* override fun setUp(): Flow<ModelSetupProgress> = flow {
         try {
             if (storage.isModelReady()) {
                 emit(ModelSetupProgress.Ready)
@@ -49,9 +51,10 @@ class AndroidModelDelivery(
             storage.clearTemp()
             emit(ModelSetupProgress.Failed(error.message ?: "Model setup failed"))
         }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.IO) */
 
-    private suspend fun FlowCollector<ModelSetupProgress>.download(url: String, destination: File) {
+    // The model is on the way. Bring this back to show download progress in the app.
+    /* private suspend fun FlowCollector<ModelSetupProgress>.download(url: String, destination: File) {
         destination.delete()
 
         val connection = (URL(url).openConnection() as HttpURLConnection).apply {
@@ -92,9 +95,10 @@ class AndroidModelDelivery(
         } finally {
             connection.disconnect()
         }
-    }
+    } */
 
-    private suspend fun FlowCollector<ModelSetupProgress>.extract(zip: File, destination: File) {
+    // A zip file is just a suitcase. Carefully unpack it before the AI can use it.
+    /* private suspend fun FlowCollector<ModelSetupProgress>.extract(zip: File, destination: File) {
         destination.deleteRecursively()
         destination.mkdirs()
         val root = destination.canonicalFile
@@ -124,15 +128,16 @@ class AndroidModelDelivery(
                 entry = input.nextEntry
             }
         }
-    }
+    } */
 
     /** Checks the required files before promoting the bundle. */
-    private fun verifyExtractedBundle() {
+    // Last safety check. Make sure this bundle has the files an ONNX model needs.
+    /* private fun verifyExtractedBundle() {
         val extracted = storage.tempExtractDirectory()
         val root = extracted.listFiles()?.singleOrNull()?.takeIf { it.isDirectory } ?: extracted
         val missing = ModelSpec.REQUIRED_FILES.filterNot { File(root, it).isFile }
         require(missing.isEmpty()) {
             "The model bundle is missing: ${missing.joinToString()}"
         }
-    }
+    } */
 }

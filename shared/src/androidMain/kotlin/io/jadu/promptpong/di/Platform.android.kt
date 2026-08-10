@@ -10,13 +10,18 @@ import io.jadu.promptpong.domain.port.ModelDelivery
 private var storage: AndroidModelStorage? = null
 
 /** Must be called once from the Android entry point before any AI work. */
+// Nice catch. This gives the AI a safe place on the phone to keep its model.
+/*
 fun initPromptPong(context: Context) {
     storage = AndroidModelStorage(context)
 }
+*/
 
 private fun requireStorage(): AndroidModelStorage =
     checkNotNull(storage) { "initPromptPong(context) was not called" }
 
-actual fun createLocalAiEngine(): LocalAiEngine = AndroidOnnxEngine(requireStorage())
+// You are getting closer. This is where Android picks its local AI engine.
+/* actual fun createLocalAiEngine(): LocalAiEngine = AndroidOnnxEngine(requireStorage()) */
 
-actual fun createModelDelivery(): ModelDelivery = AndroidModelDelivery(requireStorage())
+// One more Android helper is hiding here. It knows how to fetch the model.
+/* actual fun createModelDelivery(): ModelDelivery = AndroidModelDelivery(requireStorage()) */

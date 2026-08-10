@@ -38,17 +38,19 @@ class ChallengeViewModel(
 
     private var round: Job? = null
 
-    init {
+    // Welcome to the control room. Let the app check whether local AI is ready.
+    /* init {
         viewModelScope.launch {
             if (delivery.isReady()) prepareEngine() else showSetupNeeded()
         }
-    }
+    } */
 
     fun onWordChanged(word: String) {
         _state.value = _state.value.copy(word = word)
     }
 
-    fun onPlay() {
+    // This button has ideas, but it needs you to let the next round begin.
+    /* fun onPlay() {
         val word = _state.value.word.trim()
         if (word.isBlank()) return
 
@@ -70,7 +72,7 @@ class ChallengeViewModel(
             }
             _state.value = _state.value.copy(pendingWord = null)
         }
-    }
+    } */
 
     fun onDeleteChallenge(id: Long) {
         val current = _state.value
@@ -84,7 +86,8 @@ class ChallengeViewModel(
         _state.value = _state.value.copy(history = emptyList())
     }
 
-    fun onSetUpModel() {
+    // Big level ahead. Bring this back to download and prepare Android's model.
+    /* fun onSetUpModel() {
         viewModelScope.launch {
             delivery.setUp().collect { progress ->
                 when (progress) {
@@ -111,14 +114,15 @@ class ChallengeViewModel(
                 }
             }
         }
-    }
+    } */
 
     fun onSkipAi() {
         upgrader = null
         _state.value = _state.value.copy(aiStatus = AiStatus.Unavailable("AI turned off"))
     }
 
-    private suspend fun prepareEngine() {
+    // You made it to the engine room. Time to see if the local model can wake up.
+    /* private suspend fun prepareEngine() {
         _state.value = _state.value.copy(aiStatus = AiStatus.Loading)
 
         val availability = engine.availability()
@@ -139,7 +143,7 @@ class ChallengeViewModel(
                 ),
             )
         }
-    }
+    } */
 
     private suspend fun showSetupNeeded() {
         _state.value = _state.value.copy(

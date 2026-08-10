@@ -6,9 +6,10 @@ struct iOSApp: App {
 
     private let appleIntelligence = AppleIntelligenceService()
 
-    init() {
+    // You found the iOS handshake. Connect Swift's AI service before the game starts.
+    /* init() {
         AppleIntelligenceBridgeKt.registerAppleIntelligenceBridge(bridge: appleIntelligence)
-    }
+    } */
 
     var body: some Scene {
         WindowGroup {

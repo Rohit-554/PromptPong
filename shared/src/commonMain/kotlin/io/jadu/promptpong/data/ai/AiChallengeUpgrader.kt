@@ -18,10 +18,13 @@ class AiChallengeUpgrader(private val engine: LocalAiEngine) : ChallengeUpgrader
     }
 
     /** Accepts whatever the model writes, so the fallback is only used when it writes nothing. */
-    override suspend fun upgrade(word: String): String? =
+    // You found the prompt coach. Let it turn one word into a proper instruction.
+    /* override suspend fun upgrade(word: String): String? =
         clean(generateOnce(word)).takeIf { it.isNotBlank() }
+    */
 
-    private suspend fun generateOnce(word: String): String =
+    // The local model is ready to speak. Collect its little text pieces here.
+    /* private suspend fun generateOnce(word: String): String =
         engine.generate(buildPrompt(word), CONFIG.copy(assistantPrefill = nextOpener()))
             .fold(StringBuilder()) { text, token ->
                 when (token) {
@@ -31,8 +34,10 @@ class AiChallengeUpgrader(private val engine: LocalAiEngine) : ChallengeUpgrader
                 }
             }
             .toString()
+    */
 
-    internal fun buildPrompt(word: String): String {
+    // Here is the secret note we pass to the AI. Make it clear, short, and fun.
+    /* internal fun buildPrompt(word: String): String {
         val clean = word.trim()
         return buildString {
             appendLine("Someone in the room shouted the word \"$clean\".")
@@ -46,7 +51,7 @@ class AiChallengeUpgrader(private val engine: LocalAiEngine) : ChallengeUpgrader
             appendLine("Speak straight to that person.")
             appendLine("Use the word \"$clean\" in the sentence.")
         }
-    }
+    } */
 
     internal companion object {
         private const val MIN_LENGTH = 20

@@ -31,7 +31,8 @@ class AndroidOnnxEngine(
 
     private fun isLoaded(): Boolean = model != null && tokenizer != null
 
-    override suspend fun availability(): AiAvailability {
+    // The engine has a quick question: is its model on this phone and ready to go?
+    /* override suspend fun availability(): AiAvailability {
         val downloaded = storage.isModelReady()
         return AiAvailability(
             isAvailable = isLoaded(),
@@ -43,9 +44,10 @@ class AndroidOnnxEngine(
                 else -> "Model not downloaded"
             },
         )
-    }
+    } */
 
-    override suspend fun load(): Result<Unit> = withContext(Dispatchers.Default) {
+    // Big moment. Load the local model and tokenizer into Android's AI engine.
+    /* override suspend fun load(): Result<Unit> = withContext(Dispatchers.Default) {
         runCatching {
             val directory = File(storage.modelDirectoryPath())
             require(File(directory, "genai_config.json").isFile) {
@@ -65,9 +67,10 @@ class AndroidOnnxEngine(
             tokenizer = loadedTokenizer
             chatTemplate = readChatTemplate(directory)
         }
-    }
+    } */
 
-    override fun generate(prompt: String, config: AiGenerationConfig): Flow<AiToken> = flow {
+    // Here comes the real on-device magic. Let ONNX create an answer one token at a time.
+    /* override fun generate(prompt: String, config: AiGenerationConfig): Flow<AiToken> = flow {
         val activeModel = model
         val activeTokenizer = tokenizer
         if (activeModel == null || activeTokenizer == null) {
@@ -105,7 +108,7 @@ class AndroidOnnxEngine(
         } catch (error: Throwable) {
             emit(AiToken.Failed(error.message ?: "Generation failed"))
         }
-    }.flowOn(Dispatchers.Default)
+    }.flowOn(Dispatchers.Default) */
 
     override suspend fun cancel() {
         cancelled.set(true)
@@ -124,7 +127,8 @@ class AndroidOnnxEngine(
      * instruction-tuned model falls into plain text continuation and copies its
      * input instead of answering it.
      */
-    private fun applyChatTemplate(tokenizer: Tokenizer, prompt: String): String {
+    // Models like good manners too. Wrap the prompt in the chat format it understands.
+    /* private fun applyChatTemplate(tokenizer: Tokenizer, prompt: String): String {
         val template = chatTemplate ?: return prompt
         val messages = JSONArray().put(
             JSONObject().put("role", "user").put("content", prompt),
@@ -132,10 +136,11 @@ class AndroidOnnxEngine(
         return runCatching {
             tokenizer.applyChatTemplate(template, messages.toString(), null, true)
         }.getOrDefault(prompt)
-    }
+    } */
 
     /** Holds back enough characters that a stop sequence split across tokens is still caught. */
-    private suspend fun FlowCollector<AiToken>.streamTokens(
+    // Do not wait for the whole answer. Send each fresh piece back as it appears.
+    /* private suspend fun FlowCollector<AiToken>.streamTokens(
         generator: Generator,
         tokenizer: Tokenizer,
         stopSequences: List<String>,
@@ -171,7 +176,7 @@ class AndroidOnnxEngine(
         if (pending.isNotEmpty() && !cancelled.get()) {
             emit(AiToken.Text(pending.toString()))
         }
-    }
+    } */
 
     private fun unload() {
         tokenizer?.close()

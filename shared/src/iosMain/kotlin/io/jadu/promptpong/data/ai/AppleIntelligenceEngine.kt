@@ -19,7 +19,8 @@ class AppleIntelligenceEngine : LocalAiEngine {
     private var available = false
     private var status = "Checking Apple Intelligence"
 
-    override suspend fun availability(): AiAvailability {
+    // First ask the iPhone a simple question: can Apple Intelligence join the game?
+    /* override suspend fun availability(): AiAvailability {
         refresh()
         return AiAvailability(
             isAvailable = available,
@@ -27,14 +28,16 @@ class AppleIntelligenceEngine : LocalAiEngine {
             engineName = "Apple Intelligence",
             statusText = status,
         )
-    }
+    } */
 
-    override suspend fun load(): Result<Unit> = runCatching {
+    // Nice find. This makes sure Apple Intelligence is awake before we ask it anything.
+    /* override suspend fun load(): Result<Unit> = runCatching {
         refresh()
         check(available) { status }
-    }
+    } */
 
-    override fun generate(prompt: String, config: AiGenerationConfig): Flow<AiToken> = callbackFlow {
+    // Swift and Kotlin are ready to chat. Pass the prompt over the bridge and stream it back.
+    /* override fun generate(prompt: String, config: AiGenerationConfig): Flow<AiToken> = callbackFlow {
         val bridge = appleIntelligenceBridge()
         if (bridge == null) {
             trySend(AiToken.Failed(BRIDGE_MISSING))
@@ -65,13 +68,14 @@ class AppleIntelligenceEngine : LocalAiEngine {
         )
 
         awaitClose { bridge.cancel() }
-    }
+    } */
 
     override suspend fun cancel() {
         appleIntelligenceBridge()?.cancel()
     }
 
-    private suspend fun refresh() {
+    // This refreshes the AI status so the app can explain what the iPhone supports.
+    /* private suspend fun refresh() {
         val bridge = appleIntelligenceBridge()
         if (bridge == null) {
             available = false
@@ -90,5 +94,5 @@ class AppleIntelligenceEngine : LocalAiEngine {
                 },
             )
         }
-    }
+    } */
 }

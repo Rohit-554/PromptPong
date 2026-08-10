@@ -25,7 +25,8 @@ class HybridChallengeGenerator(
     private val inferenceLock = Mutex()
     private var nextId = 0L
 
-    override fun generate(word: String): Flow<Challenge> = flow {
+    // The game knows a safe fallback. Now let it ask the local AI for something fresh.
+    /* override fun generate(word: String): Flow<Challenge> = flow {
         val id = nextId++
         val text = generateWithModel(word)
 
@@ -36,9 +37,10 @@ class HybridChallengeGenerator(
                 templates.generate(id, word)
             },
         )
-    }
+    } */
 
-    private suspend fun generateWithModel(word: String): String? {
+    // Careful, only one round gets the mic at a time. Restore this to protect the model.
+    /* private suspend fun generateWithModel(word: String): String? {
         val upgrader = upgraderProvider() ?: return null
         if (!inferenceLock.tryLock()) return null
 
@@ -49,5 +51,5 @@ class HybridChallengeGenerator(
         } finally {
             inferenceLock.unlock()
         }
-    }
+    } */
 }

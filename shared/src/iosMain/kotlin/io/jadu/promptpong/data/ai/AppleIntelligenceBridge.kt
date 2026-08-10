@@ -29,8 +29,11 @@ interface AppleIntelligenceBridge {
 private var registeredBridge: AppleIntelligenceBridge? = null
 
 /** Called by the iOS host at launch. */
+// Knock knock. Let the iPhone introduce its Swift AI service to Kotlin.
+/*
 fun registerAppleIntelligenceBridge(bridge: AppleIntelligenceBridge) {
     registeredBridge = bridge
 }
+*/
 
 internal fun appleIntelligenceBridge(): AppleIntelligenceBridge? = registeredBridge

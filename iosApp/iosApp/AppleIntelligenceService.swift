@@ -10,7 +10,8 @@ final class AppleIntelligenceService: NSObject, AppleIntelligenceBridge {
 
     private var generationTask: Task<Void, Never>?
 
-    func checkAvailability(callback: AppleAvailabilityCallback) {
+    // The iPhone checks its gear first. Is Apple Intelligence available on this device?
+    /* func checkAvailability(callback: AppleAvailabilityCallback) {
         guard #available(iOS 26.0, *) else {
             callback.onResult(
                 available: false,
@@ -61,9 +62,10 @@ final class AppleIntelligenceService: NSObject, AppleIntelligenceBridge {
             statusText: "This build was made with an SDK that has no FoundationModels"
         )
         #endif
-    }
+    } */
 
-    func generate(
+    // Here is Apple's local AI at work. Stream the answer back piece by piece.
+    /* func generate(
         prompt: String,
         maxTokens: Int32,
         temperature: Double,
@@ -116,10 +118,11 @@ final class AppleIntelligenceService: NSObject, AppleIntelligenceBridge {
         #else
         callback.onError(message: "This build has no FoundationModels support")
         #endif
-    }
+    } */
 
-    func cancel() {
+    // Every good game needs a stop button. Cancel the current AI response here.
+    /* func cancel() {
         generationTask?.cancel()
         generationTask = nil
-    }
+    } */
 }
